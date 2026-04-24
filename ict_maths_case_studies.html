@@ -1,0 +1,1209 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ICT & Primary Maths — Case Studies in Planning</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;0,9..144,800;1,9..144,500&family=JetBrains+Mono:wght@400;600&family=Inter+Tight:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --ink: #1a1814;
+    --paper: #f4ede0;
+    --paper-2: #ebe2d0;
+    --accent: #c8432c;
+    --accent-2: #2d5a3f;
+    --gold: #c9a24a;
+    --muted: #6b6358;
+    --success: #2d5a3f;
+    --error: #c8432c;
+    --border: #1a181433;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body {
+    background: var(--paper);
+    color: var(--ink);
+    font-family: 'Inter Tight', sans-serif;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+  body {
+    background-image:
+      radial-gradient(circle at 15% 20%, rgba(200,67,44,0.05) 0%, transparent 40%),
+      radial-gradient(circle at 85% 80%, rgba(45,90,63,0.05) 0%, transparent 40%);
+    min-height: 100vh;
+    padding: 24px 16px 80px;
+  }
+  .container { max-width: 860px; margin: 0 auto; }
+
+  /* Header */
+  header {
+    border-bottom: 2px solid var(--ink);
+    padding-bottom: 24px;
+    margin-bottom: 32px;
+  }
+  .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  h1 {
+    font-family: 'Fraunces', serif;
+    font-weight: 800;
+    font-size: clamp(32px, 5vw, 52px);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+    margin-bottom: 16px;
+  }
+  h1 em { font-style: italic; font-weight: 500; color: var(--accent); }
+  .sub {
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 18px;
+    color: var(--muted);
+    max-width: 640px;
+  }
+
+  /* Case nav */
+  .case-nav {
+    display: flex;
+    gap: 0;
+    margin: 28px 0 36px;
+    border-bottom: 1.5px solid var(--ink);
+  }
+  .case-tab {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 14px 10px;
+    cursor: pointer;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    border-bottom: 3px solid transparent;
+    margin-bottom: -1.5px;
+    transition: all 0.2s ease;
+    text-align: left;
+  }
+  .case-tab:hover { color: var(--ink); }
+  .case-tab.active {
+    color: var(--ink);
+    border-bottom-color: var(--accent);
+  }
+  .case-tab .num { display: block; color: var(--accent); font-weight: 600; margin-bottom: 4px; }
+  .case-tab.done .num::after { content: ' ✓'; color: var(--success); }
+
+  /* Case container */
+  .case { display: none; }
+  .case.active { display: block; animation: slideIn 0.4s cubic-bezier(0.22, 1, 0.36, 1); }
+  @keyframes slideIn {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Case vignette (shared look) */
+  .vignette {
+    background: var(--paper-2);
+    border: 1.5px solid var(--ink);
+    padding: 32px;
+    margin-bottom: 28px;
+    box-shadow: 6px 6px 0 var(--ink);
+    position: relative;
+  }
+  .vignette .stamp {
+    position: absolute;
+    top: -12px;
+    right: 24px;
+    background: var(--accent);
+    color: var(--paper);
+    padding: 4px 14px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+  }
+  .vignette h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 6px;
+  }
+  .vignette .meta {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 18px;
+  }
+  .vignette .narrative {
+    font-family: 'Fraunces', serif;
+    font-size: 16.5px;
+    line-height: 1.6;
+    color: var(--ink);
+  }
+  .vignette .narrative p { margin-bottom: 12px; }
+  .vignette .narrative p:last-child { margin-bottom: 0; }
+  .vignette .plan-block {
+    background: var(--paper);
+    border-left: 3px solid var(--gold);
+    padding: 16px 20px;
+    margin: 16px 0;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 13px;
+    line-height: 1.7;
+    font-weight: 400;
+  }
+  .vignette .plan-block .plan-label {
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    color: var(--accent);
+    display: block;
+    margin-bottom: 8px;
+  }
+  .vignette .plan-block .field {
+    display: flex;
+    gap: 12px;
+    padding: 3px 0;
+  }
+  .vignette .plan-block .field .key {
+    color: var(--muted);
+    min-width: 110px;
+    font-weight: 600;
+  }
+
+  /* Task prompt */
+  .task-card {
+    background: var(--paper-2);
+    border: 1.5px solid var(--ink);
+    padding: 28px 30px;
+    margin-bottom: 24px;
+  }
+  .task-card h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .task-card .prompt {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    line-height: 1.4;
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    margin-bottom: 16px;
+  }
+  .task-card .guidance {
+    font-size: 14.5px;
+    color: var(--muted);
+    font-style: italic;
+    padding-left: 14px;
+    border-left: 2px solid var(--gold);
+  }
+
+  /* --- Case 1: Diagnose flaws (multi-select + short justification) --- */
+  .flaw-list {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-top: 8px;
+  }
+  .flaw-opt {
+    background: var(--paper);
+    border: 1.5px solid var(--ink);
+    padding: 14px 16px;
+    cursor: pointer;
+    font-size: 14.5px;
+    line-height: 1.45;
+    text-align: left;
+    font-family: inherit;
+    color: inherit;
+    display: flex;
+    gap: 12px;
+    align-items: flex-start;
+    transition: all 0.15s ease;
+  }
+  .flaw-opt:hover:not(.disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  .flaw-opt .check {
+    width: 20px;
+    height: 20px;
+    border: 1.5px solid var(--ink);
+    background: var(--paper);
+    flex-shrink: 0;
+    margin-top: 1px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    font-weight: 700;
+  }
+  .flaw-opt.selected { background: var(--ink); color: var(--paper); }
+  .flaw-opt.selected .check { background: var(--paper); color: var(--ink); }
+  .flaw-opt.correct { background: var(--success); color: var(--paper); border-color: var(--success); }
+  .flaw-opt.correct .check { background: var(--paper); color: var(--success); }
+  .flaw-opt.correct .check::after { content: '✓'; }
+  .flaw-opt.incorrect { background: var(--error); color: var(--paper); border-color: var(--error); }
+  .flaw-opt.incorrect .check { background: var(--paper); color: var(--error); }
+  .flaw-opt.incorrect .check::after { content: '✗'; }
+  .flaw-opt.missed { border: 2.5px solid var(--success); }
+  .flaw-opt.missed .check::after { content: '✓'; color: var(--success); }
+  .flaw-opt.disabled { cursor: default; }
+
+  /* --- Case 2: Branching decisions --- */
+  .branch-step {
+    display: none;
+    background: var(--paper-2);
+    border: 1.5px solid var(--ink);
+    padding: 26px 28px;
+    margin-bottom: 20px;
+  }
+  .branch-step.active { display: block; animation: slideIn 0.35s ease; }
+  .branch-step .step-label {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 10px;
+  }
+  .branch-step h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 20px;
+    font-weight: 600;
+    margin-bottom: 8px;
+    line-height: 1.35;
+  }
+  .branch-step .setup {
+    font-size: 14.5px;
+    color: var(--muted);
+    font-style: italic;
+    margin-bottom: 18px;
+    padding-left: 14px;
+    border-left: 2px solid var(--gold);
+  }
+  .branch-opts {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .branch-choice {
+    background: var(--paper);
+    border: 1.5px solid var(--ink);
+    padding: 16px 18px;
+    cursor: pointer;
+    font-family: inherit;
+    font-size: 14.5px;
+    line-height: 1.45;
+    color: inherit;
+    text-align: left;
+    transition: all 0.15s ease;
+    position: relative;
+  }
+  .branch-choice:hover:not(.disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 3px 3px 0 var(--ink);
+  }
+  .branch-choice.selected.best { background: var(--success); color: var(--paper); border-color: var(--success); }
+  .branch-choice.selected.suboptimal { background: var(--gold); color: var(--ink); border-color: var(--gold); }
+  .branch-choice.selected.poor { background: var(--error); color: var(--paper); border-color: var(--error); }
+  .branch-choice .verdict {
+    display: none;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-top: 10px;
+    padding-top: 10px;
+    border-top: 1px solid currentColor;
+    opacity: 0.85;
+    font-style: normal;
+    font-weight: 500;
+  }
+  .branch-choice.selected .verdict { display: block; }
+  .branch-choice.disabled:not(.selected) { opacity: 0.45; cursor: default; }
+  .branch-rationale {
+    margin-top: 16px;
+    padding: 14px 16px;
+    background: var(--paper);
+    border-left: 3px solid var(--accent-2);
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    line-height: 1.55;
+    display: none;
+  }
+  .branch-rationale.show { display: block; animation: slideIn 0.3s ease; }
+  .branch-rationale .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-style: normal;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    margin-bottom: 6px;
+    display: block;
+  }
+  .branch-next {
+    margin-top: 20px;
+    display: none;
+  }
+  .branch-next.show { display: flex; justify-content: flex-end; }
+
+  .plan-trail {
+    background: var(--paper);
+    border: 1.5px dashed var(--border);
+    padding: 16px 20px;
+    margin-top: 16px;
+    margin-bottom: 16px;
+    display: none;
+  }
+  .plan-trail.show { display: block; }
+  .plan-trail .tlabel {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 10px;
+  }
+  .plan-trail .trail-row {
+    font-size: 13.5px;
+    padding: 4px 0;
+    display: flex;
+    gap: 10px;
+  }
+  .plan-trail .trail-row .tk {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--muted);
+    min-width: 72px;
+  }
+  .plan-trail .trail-row .tv { flex: 1; }
+  .trail-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 9px;
+    letter-spacing: 0.12em;
+    padding: 1px 7px;
+    margin-left: 6px;
+    vertical-align: middle;
+  }
+  .trail-badge.best { background: var(--success); color: var(--paper); }
+  .trail-badge.sub { background: var(--gold); color: var(--ink); }
+  .trail-badge.poor { background: var(--error); color: var(--paper); }
+
+  /* --- Case 3: Compare plans --- */
+  .plan-compare {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 16px;
+    margin: 8px 0 24px;
+  }
+  @media (max-width: 780px) {
+    .plan-compare { grid-template-columns: 1fr; }
+  }
+  .plan-option {
+    background: var(--paper);
+    border: 1.5px solid var(--ink);
+    padding: 20px 18px;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    position: relative;
+  }
+  .plan-option:hover:not(.disabled) {
+    transform: translate(-3px, -3px);
+    box-shadow: 5px 5px 0 var(--ink);
+  }
+  .plan-option.selected {
+    background: var(--ink);
+    color: var(--paper);
+    transform: translate(-3px, -3px);
+    box-shadow: 5px 5px 0 var(--accent);
+  }
+  .plan-option .teacher-name {
+    font-family: 'Fraunces', serif;
+    font-weight: 600;
+    font-size: 18px;
+    margin-bottom: 4px;
+    letter-spacing: -0.01em;
+  }
+  .plan-option .teacher-tag {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .plan-option.selected .teacher-tag { color: var(--gold); }
+  .plan-option .pfield {
+    font-size: 13px;
+    line-height: 1.5;
+    padding: 6px 0;
+    border-bottom: 1px solid var(--border);
+  }
+  .plan-option.selected .pfield { border-bottom-color: rgba(244,237,224,0.2); }
+  .plan-option .pfield:last-child { border-bottom: none; }
+  .plan-option .pfield .k {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    color: var(--muted);
+    display: block;
+    margin-bottom: 3px;
+  }
+  .plan-option.selected .pfield .k { color: var(--gold); }
+  .plan-option .verdict-stamp {
+    display: none;
+    position: absolute;
+    top: -10px;
+    right: 10px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    background: var(--success);
+    color: var(--paper);
+  }
+  .plan-option.best .verdict-stamp { display: block; background: var(--success); content: 'best'; }
+  .plan-option.weak .verdict-stamp { display: block; background: var(--error); }
+
+  /* Short answer */
+  .short-wrap { margin-top: 20px; }
+  .short-wrap label {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--muted);
+    margin-bottom: 8px;
+  }
+  .short-answer {
+    width: 100%;
+    min-height: 110px;
+    background: var(--paper);
+    border: 1.5px solid var(--ink);
+    padding: 14px 16px;
+    font-family: inherit;
+    font-size: 15px;
+    line-height: 1.5;
+    resize: vertical;
+    color: var(--ink);
+  }
+  .short-answer:focus {
+    outline: none;
+    box-shadow: 3px 3px 0 var(--ink);
+    transform: translate(-2px, -2px);
+  }
+  .short-answer[readonly] { background: var(--paper-2); opacity: 0.75; }
+
+  .model-answer {
+    margin-top: 16px;
+    padding: 18px 20px;
+    background: var(--paper);
+    border-left: 3px solid var(--gold);
+    display: none;
+  }
+  .model-answer.show { display: block; animation: slideIn 0.3s ease; }
+  .model-answer .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 10px;
+  }
+  .model-answer .txt {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  .model-answer .txt ul { margin-top: 8px; padding-left: 20px; }
+  .model-answer .txt li { margin-bottom: 6px; }
+  .self-rate {
+    display: flex;
+    gap: 8px;
+    margin-top: 14px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+  .self-rate .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--muted);
+  }
+  .rate-btn {
+    background: var(--paper);
+    border: 1.5px solid var(--ink);
+    padding: 6px 12px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    cursor: pointer;
+    transition: all 0.15s;
+    color: inherit;
+  }
+  .rate-btn:hover { transform: translate(-1px, -1px); box-shadow: 2px 2px 0 var(--ink); }
+  .rate-btn.active { background: var(--ink); color: var(--paper); }
+
+  /* Buttons */
+  .action-row {
+    display: flex;
+    justify-content: space-between;
+    gap: 12px;
+    margin-top: 20px;
+    flex-wrap: wrap;
+  }
+  .btn {
+    background: var(--ink);
+    color: var(--paper);
+    border: 1.5px solid var(--ink);
+    padding: 12px 24px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: all 0.15s ease;
+  }
+  .btn:hover:not(:disabled) {
+    transform: translate(-2px, -2px);
+    box-shadow: 4px 4px 0 var(--accent);
+  }
+  .btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  .btn.secondary { background: var(--paper); color: var(--ink); }
+  .btn.check {
+    background: var(--accent);
+    color: var(--paper);
+    border-color: var(--accent);
+  }
+  .btn.check:hover:not(:disabled) { box-shadow: 4px 4px 0 var(--ink); }
+
+  /* Overall case-level feedback */
+  .case-debrief {
+    background: var(--paper);
+    border: 1.5px solid var(--accent-2);
+    border-left: 5px solid var(--accent-2);
+    padding: 20px 24px;
+    margin-top: 24px;
+    display: none;
+  }
+  .case-debrief.show { display: block; animation: slideIn 0.35s ease; }
+  .case-debrief .lbl {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-2);
+    margin-bottom: 10px;
+  }
+  .case-debrief h4 {
+    font-family: 'Fraunces', serif;
+    font-size: 19px;
+    font-weight: 600;
+    margin-bottom: 10px;
+  }
+  .case-debrief p {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    line-height: 1.6;
+    margin-bottom: 10px;
+  }
+  .case-debrief p:last-child { margin-bottom: 0; }
+
+  /* Final summary */
+  .final-summary {
+    background: var(--paper-2);
+    border: 2px solid var(--ink);
+    padding: 44px 36px;
+    text-align: center;
+    box-shadow: 8px 8px 0 var(--ink);
+    margin-top: 32px;
+    display: none;
+  }
+  .final-summary.show { display: block; animation: slideIn 0.5s ease; }
+  .final-summary h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 36px;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 12px;
+  }
+  .final-summary h2 em { font-style: italic; color: var(--accent); font-weight: 500; }
+  .final-summary .summary-body {
+    font-family: 'Fraunces', serif;
+    font-size: 17px;
+    line-height: 1.6;
+    color: var(--muted);
+    max-width: 580px;
+    margin: 0 auto 24px;
+  }
+  .final-summary .takeaways {
+    text-align: left;
+    max-width: 580px;
+    margin: 0 auto;
+    border-top: 1px solid var(--border);
+    padding-top: 24px;
+  }
+  .final-summary .takeaways h3 {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 14px;
+  }
+  .final-summary .takeaways ul { list-style: none; padding: 0; }
+  .final-summary .takeaways li {
+    padding: 10px 0 10px 28px;
+    border-bottom: 1px solid var(--border);
+    font-size: 15px;
+    line-height: 1.5;
+    position: relative;
+  }
+  .final-summary .takeaways li:last-child { border-bottom: none; }
+  .final-summary .takeaways li::before {
+    content: '→';
+    position: absolute;
+    left: 0;
+    color: var(--accent);
+    font-family: 'JetBrains Mono', monospace;
+  }
+</style>
+</head>
+<body>
+<div class="container">
+
+<header>
+  <div class="eyebrow">EDU / ICT & Primary Mathematics / Planning Case Studies</div>
+  <h1>Three Classrooms, <em>Three Decisions</em></h1>
+  <p class="sub">You'll work through three cases drawn from primary schools. Each asks a different question — not "what is the right answer?" but "what kind of thinking does Easingwood &amp; Williams's framework demand here?"</p>
+</header>
+
+<div class="case-nav">
+  <button class="case-tab active" data-tab="1"><span class="num">Case 01</span>Diagnose</button>
+  <button class="case-tab" data-tab="2"><span class="num">Case 02</span>Decide</button>
+  <button class="case-tab" data-tab="3"><span class="num">Case 03</span>Compare</button>
+</div>
+
+<!-- =========================================================
+  CASE 1: Diagnose flaws in a weak plan
+========================================================= -->
+<div class="case active" data-case="1">
+  <div class="vignette">
+    <span class="stamp">Case 01 / Diagnose</span>
+    <h2>Mr Dhillon's graphing lesson</h2>
+    <div class="meta">Year 4 · 60 minutes · ICT suite booked</div>
+    <div class="narrative">
+      <p>Mr Dhillon's mathematics coordinator has asked him to "use the ICT suite more" in his data-handling unit. He's planning a lesson on bar charts for next Tuesday. Here is what he's written so far:</p>
+      <div class="plan-block">
+        <span class="plan-label">Lesson plan — draft 1</span>
+        <div class="field"><span class="key">Objective:</span><span>Pupils will produce a bar chart in Microsoft Excel showing favourite fruits in the class.</span></div>
+        <div class="field"><span class="key">Starter:</span><span>Demonstrate on the interactive whiteboard how to enter data into cells A1:B6 and click Insert → Chart.</span></div>
+        <div class="field"><span class="key">Main:</span><span>Pupils copy the same data from the board into Excel and reproduce the chart. Those who finish early will change the chart colour.</span></div>
+        <div class="field"><span class="key">Assessment:</span><span>I will mark pupils on whether they successfully produced a bar chart in Excel by the end of the session.</span></div>
+        <div class="field"><span class="key">Differentiation:</span><span>Higher-attaining pupils will be asked to use 3D bar chart style. Lower-attaining pupils will sit next to a confident ICT user.</span></div>
+      </div>
+      <p>Mr Dhillon is pleased — it's ambitious, uses technology, and every child will produce an artefact. His mentor has concerns. What has he got wrong?</p>
+    </div>
+  </div>
+
+  <div class="task-card">
+    <h3>Your task</h3>
+    <div class="prompt">Select every flaw in Mr Dhillon's plan that Easingwood &amp; Williams's framework would identify. Then write a short recommendation for <em>one</em> flaw of your choosing.</div>
+    <div class="guidance">Four of the six statements below are genuine flaws. Two are red herrings. Read carefully — the plan is wrong in subtle ways, not obvious ones.</div>
+  </div>
+
+  <div class="flaw-list" id="flawList">
+    <button class="flaw-opt" data-id="f1" data-correct="true">
+      <span class="check"></span>
+      <span>The objective confuses the ICT skill (producing a chart in Excel) with the mathematical learning. Pupils could produce a technically correct chart while learning nothing about what a bar chart <em>represents</em>.</span>
+    </button>
+    <button class="flaw-opt" data-id="f2" data-correct="false">
+      <span class="check"></span>
+      <span>Favourite fruits is an inappropriate topic for data handling at Year 4 — it is too simplistic and doesn't connect to the National Numeracy Strategy.</span>
+    </button>
+    <button class="flaw-opt" data-id="f3" data-correct="true">
+      <span class="check"></span>
+      <span>There is no practical element — pupils aren't collecting the data themselves, just copying numbers from the board. The authors are explicit that the computer should support hands-on mathematics, not replace it.</span>
+    </button>
+    <button class="flaw-opt" data-id="f4" data-correct="true">
+      <span class="check"></span>
+      <span>Assessment is directed at the child's use of the computer rather than the mathematics learning — exactly the misinterpretation Crompton and Mann warn about.</span>
+    </button>
+    <button class="flaw-opt" data-id="f5" data-correct="false">
+      <span class="check"></span>
+      <span>Excel is the wrong software choice for Year 4 — a dedicated primary package like Black Cat Toolbox or Information Workshop would be more age-appropriate.</span>
+    </button>
+    <button class="flaw-opt" data-id="f6" data-correct="true">
+      <span class="check"></span>
+      <span>Differentiation is cosmetic (3D vs 2D styling) rather than cognitive — it doesn't extend higher attainers' mathematical thinking or scaffold lower attainers' understanding.</span>
+    </button>
+  </div>
+
+  <div class="short-wrap">
+    <label>Pick one flaw you identified and write a short recommendation (2–3 sentences) for how Mr Dhillon should fix it</label>
+    <textarea class="short-answer" data-qid="c1-short" placeholder="Which flaw will you address, and what should Mr Dhillon do instead?"></textarea>
+  </div>
+
+  <div class="action-row">
+    <span></span>
+    <button class="btn check" data-action="check-c1">Check case 1</button>
+  </div>
+
+  <div class="case-debrief" id="debrief-c1">
+    <div class="lbl">Case 1 debrief</div>
+    <h4>The deeper problem under all four flaws</h4>
+    <p>Mr Dhillon's lesson fails the value-added test. The computer is being used as a <em>display</em> tool, not as a cognitive tool. Pupils replicate a chart that already exists; they do not sort, search, question, predict, or interpret. The assessment, differentiation, and lack of practical work all flow from an objective that centres the software rather than the mathematics.</p>
+    <p>A fix at the objective level reshapes everything else: replace "produce a bar chart in Excel" with something like <em>"pupils interpret and justify claims from a data set they have collected"</em>. The computer now earns its place — speed and provisionality let pupils trial multiple chart types and argue which one best supports their claim.</p>
+  </div>
+
+  <div class="model-answer" id="model-c1">
+    <div class="lbl">Sample recommendation (for flaw 1)</div>
+    <div class="txt">Rewrite the objective as a mathematics objective: <em>"Pupils will interpret a bar chart they have constructed to answer a question about their own class."</em> The software becomes the tool for answering the question rather than the thing being taught. Mr Dhillon could then open the lesson with a genuine question ("Which fruit should the tuck shop stock more of?"), let pupils collect data themselves, and use Excel's speed to trial two or three chart types so they can discuss which best supports a recommendation.</div>
+    <div class="self-rate">
+      <span class="lbl">Self-rate your response:</span>
+      <button class="rate-btn" data-qid="c1-short" data-rate="full">Strong</button>
+      <button class="rate-btn" data-qid="c1-short" data-rate="partial">Partial</button>
+      <button class="rate-btn" data-qid="c1-short" data-rate="miss">Needs rework</button>
+    </div>
+  </div>
+</div>
+
+<!-- =========================================================
+  CASE 2: Build a plan by branching decisions
+========================================================= -->
+<div class="case" data-case="2">
+  <div class="vignette">
+    <span class="stamp">Case 02 / Decide</span>
+    <h2>Ms Okafor's LOGO unit</h2>
+    <div class="meta">Year 3 · 6-lesson unit · Mixed prior experience</div>
+    <div class="narrative">
+      <p>Ms Okafor is planning a six-lesson LOGO unit for her Year 3 class. The mathematics focus is on angle, particularly right angles and their combinations. Her class is mixed — a handful of pupils used a Bee-Bot in Year 1, but most have no programming experience. The school has one set of Roamers, a computer lab, and a site licence for <em>Imagine Logo</em>.</p>
+      <p>She needs to make four planning decisions. You will guide each one.</p>
+    </div>
+  </div>
+
+  <div class="plan-trail" id="trail-c2">
+    <div class="tlabel">Plan so far</div>
+    <div id="trailContent"></div>
+  </div>
+
+  <!-- Decision 1: Where to start -->
+  <div class="branch-step active" data-step="1">
+    <div class="step-label">Decision 1 of 4</div>
+    <h4>Where should the unit begin?</h4>
+    <div class="setup">Given mixed prior experience and the cognitive challenge the authors describe, what is Ms Okafor's best opening lesson?</div>
+    <div class="branch-opts">
+      <button class="branch-choice" data-step="1" data-quality="best" data-label="Start with 'human turtle' in the playground">
+        <strong>A.</strong> Split the class into pairs in the playground. One child gives commands ("forward three", "right turn") to their partner who physically walks the path. No computer yet.
+        <div class="verdict">◆ Best — grounds direction in embodied experience</div>
+      </button>
+      <button class="branch-choice" data-step="1" data-quality="suboptimal" data-label="Start with Roamers on a play mat">
+        <strong>B.</strong> Introduce Roamers immediately. Pupils program paths to get from one marked point to another on the classroom floor.
+        <div class="verdict">◆ Acceptable, but skips a valuable grounding stage</div>
+      </button>
+      <button class="branch-choice" data-step="1" data-quality="poor" data-label="Start with Imagine Logo on screen">
+        <strong>C.</strong> Start in the ICT suite with <em>Imagine Logo</em>. Demonstrate on the whiteboard, then let pupils experiment with point-and-click commands.
+        <div class="verdict">◆ Weak — risks the "up/down" misconception the authors warn about</div>
+      </button>
+      <button class="branch-choice" data-step="1" data-quality="suboptimal" data-label="Start with typed commands in Imagine Logo">
+        <strong>D.</strong> Start with typed commands in <em>Imagine Logo</em> — pupils learn FORWARD, LEFT, RIGHT from the beginning so they're "thinking LOGO" straight away.
+        <div class="verdict">◆ Too abstract for day one with no prior experience</div>
+      </button>
+    </div>
+    <div class="branch-rationale" data-for="1">
+      <span class="lbl">Why this matters</span>
+      The authors argue that pupils often misread screen-turtle movement as "up/down" rather than "forward/back" when they haven't first experienced direction in a three-dimensional, embodied way. The human turtle (or floor turtle) is the cheap insurance policy against this misconception — skip it and some pupils will carry a conceptual confusion through the rest of the unit.
+    </div>
+    <div class="branch-next">
+      <button class="btn" data-action="next-branch" data-step="1">Next decision →</button>
+    </div>
+  </div>
+
+  <!-- Decision 2: Pairing / grouping -->
+  <div class="branch-step" data-step="2">
+    <div class="step-label">Decision 2 of 4</div>
+    <h4>How will pupils work at the computer?</h4>
+    <div class="setup">Ms Okafor has booked the ICT suite for lessons 3–6. How should she organise pupils across the computers?</div>
+    <div class="branch-opts">
+      <button class="branch-choice" data-step="2" data-quality="best" data-label="Pairs; mix LOGO experience across pairs">
+        <strong>A.</strong> Pairs, deliberately mixing the few experienced pupils across pairs so each pair has one "driver" with some confidence.
+        <div class="verdict">◆ Best — pairs enable the collaborative discourse the authors emphasise, and mixing levels activates peer tutoring</div>
+      </button>
+      <button class="branch-choice" data-step="2" data-quality="poor" data-label="One pupil per computer">
+        <strong>B.</strong> One pupil per computer so each child has full control and gets maximum practice time.
+        <div class="verdict">◆ Weak — removes collaborative talk, which Papert-influenced pedagogy treats as central</div>
+      </button>
+      <button class="branch-choice" data-step="2" data-quality="suboptimal" data-label="Threes, grouped by prior attainment">
+        <strong>C.</strong> Groups of three, grouped by mathematical prior attainment so the task can be pitched for each group.
+        <div class="verdict">◆ Acceptable for the maths, but threes risk one child watching</div>
+      </button>
+      <button class="branch-choice" data-step="2" data-quality="suboptimal" data-label="Pairs, grouped by LOGO experience">
+        <strong>D.</strong> Pairs, grouping the experienced pupils together so they can extend quickly and not be held back.
+        <div class="verdict">◆ Understandable, but wastes the peer-tutoring opportunity the mix would create</div>
+      </button>
+    </div>
+    <div class="branch-rationale" data-for="2">
+      <span class="lbl">Why this matters</span>
+      The authors repeatedly frame LOGO as a vehicle for collaborative learning and discourse. Pairs encourage negotiation ("no, we need to turn <em>more</em> than 90°"); solo work silences that discussion. Mixing experience isn't charity for the less confident — it gives the more confident pupil the cognitively valuable task of <em>explaining</em>, which deepens their own understanding.
+    </div>
+    <div class="branch-next">
+      <button class="btn" data-action="next-branch" data-step="2">Next decision →</button>
+    </div>
+  </div>
+
+  <!-- Decision 3: Handling the circle request -->
+  <div class="branch-step" data-step="3">
+    <div class="step-label">Decision 3 of 4</div>
+    <h4>Handling a pupil's question about circles</h4>
+    <div class="setup">In lesson 4, a pupil wants to draw a clock face and asks: "How do I make the turtle draw a circle?" Ms Okafor has seen this coming. What is her best response, given the angle focus of her unit?</div>
+    <div class="branch-opts">
+      <button class="branch-choice" data-step="3" data-quality="best" data-label="Scaffold a REPEAT procedure that hits factors of 360">
+        <strong>A.</strong> Scaffold the pupil to write a REPEAT procedure: "What if the turtle moved forward a tiny bit, turned a tiny bit, and did that many times? The turn has to add up to... how much?" Lets the pupil discover the 360° constraint.
+        <div class="verdict">◆ Best — uses the circle as a vehicle for the unit's angle focus</div>
+      </button>
+      <button class="branch-choice" data-step="3" data-quality="poor" data-label="Tell the pupil circles aren't possible in LOGO">
+        <strong>B.</strong> Explain that turtles can only draw straight lines, so the pupil should pick a shape with corners instead.
+        <div class="verdict">◆ Wrong — this contradicts the chapter, and shuts down a rich opportunity</div>
+      </button>
+      <button class="branch-choice" data-step="3" data-quality="suboptimal" data-label="Give the pupil a pre-written CIRCLE procedure">
+        <strong>C.</strong> Give the pupil a pre-written CIRCLE procedure to paste in. This lets them progress with the clock face without getting stuck.
+        <div class="verdict">◆ Pragmatic, but sacrifices the mathematical payoff — this unit is <em>about</em> angle</div>
+      </button>
+      <button class="branch-choice" data-step="3" data-quality="suboptimal" data-label="Redirect to a graphics package">
+        <strong>D.</strong> Redirect the pupil to use a graphics package to draw the clock, coming back to LOGO for a different shape.
+        <div class="verdict">◆ Misses the point — the pupil's question <em>is</em> the lesson</div>
+      </button>
+    </div>
+    <div class="branch-rationale" data-for="3">
+      <span class="lbl">Why this matters</span>
+      The authors acknowledge the circle question is philosophically contested — sometimes a built-in command is fine. But the governing question is always <em>what is the learning objective?</em> Here the unit's focus is angle, so a REPEAT procedure whose turn must total 360° is the mathematical gold. The pupil's clock face becomes a vehicle for discovering that a full turn equals 360° and that the relationship between step-size and turn-size determines circle size.
+    </div>
+    <div class="branch-next">
+      <button class="btn" data-action="next-branch" data-step="3">Next decision →</button>
+    </div>
+  </div>
+
+  <!-- Decision 4: Assessment design -->
+  <div class="branch-step" data-step="4">
+    <div class="step-label">Decision 4 of 4</div>
+    <h4>Designing the end-of-unit assessment</h4>
+    <div class="setup">Ms Okafor needs evidence of mathematical learning for the unit. Which assessment approach best fits the framework?</div>
+    <div class="branch-opts">
+      <button class="branch-choice" data-step="4" data-quality="best" data-label="Paper task: predict turtle paths + justify with angle reasoning">
+        <strong>A.</strong> A paper task: pupils are shown four short LOGO procedures and must predict what each will draw, then refine one procedure to make it more concise. They justify each refinement in a sentence.
+        <div class="verdict">◆ Best — assesses mathematical thinking, independent of keyboard fluency</div>
+      </button>
+      <button class="branch-choice" data-step="4" data-quality="poor" data-label="Timed test on entering LOGO commands">
+        <strong>B.</strong> A timed practical test: pupils sit at computers and are marked on how quickly they can produce a square, triangle, and hexagon.
+        <div class="verdict">◆ Weak — assesses keyboard speed and recall, not mathematics</div>
+      </button>
+      <button class="branch-choice" data-step="4" data-quality="suboptimal" data-label="Portfolio of screenshots from the unit">
+        <strong>C.</strong> A portfolio of screenshots of each pupil's best drawings from the unit, with a one-sentence caption per image.
+        <div class="verdict">◆ Partial — shows output but little evidence of reasoning</div>
+      </button>
+      <button class="branch-choice" data-step="4" data-quality="suboptimal" data-label="Teacher observation during pair work">
+        <strong>D.</strong> Formative observation during pair work, noting which pupils propose commands versus which type them in.
+        <div class="verdict">◆ Valuable formatively, but hard to defend as the <em>only</em> evidence of learning</div>
+      </button>
+    </div>
+    <div class="branch-rationale" data-for="4">
+      <span class="lbl">Why this matters</span>
+      The Crompton and Mann warning bites hardest at the assessment stage. A computer-based LOGO assessment risks measuring typing speed, mouse accuracy, and familiarity with the software interface — none of which is mathematics. A paper prediction-and-justification task strips away the technology confound and asks directly: <em>can this pupil reason about angle and distance?</em> The best unit-level design pairs something like option A with formative observation (option D) during the unit itself.
+    </div>
+    <div class="branch-next">
+      <button class="btn" data-action="finish-branch">See case debrief →</button>
+    </div>
+  </div>
+
+  <div class="case-debrief" id="debrief-c2">
+    <div class="lbl">Case 2 debrief</div>
+    <h4>The four decisions add up to one principle</h4>
+    <p>Each decision you made tested a different facet of the same idea: <em>keep the mathematical cognition with the learner</em>. Starting concrete protects against misconception. Pairing enables the talk that makes reasoning visible. Scaffolding the circle turns a pupil's aside into the unit's central mathematical moment. Paper-based assessment confirms the learning without the technology confounding it.</p>
+    <p>Ms Okafor's plan isn't "better" because it uses more technology — it's better because the technology stays in its proper role as a tool, and the child stays in the role of mathematician.</p>
+  </div>
+</div>
+
+<!-- =========================================================
+  CASE 3: Compare three plans and justify
+========================================================= -->
+<div class="case" data-case="3">
+  <div class="vignette">
+    <span class="stamp">Case 03 / Compare</span>
+    <h2>The Year 5 data-handling planning meeting</h2>
+    <div class="meta">Three teachers · Same objective · Different plans</div>
+    <div class="narrative">
+      <p>Three Year 5 teachers at Oakfield Primary are planning the same data-handling objective: <em>"Pupils will frame a question, collect data, and use a database to interpret their findings."</em> Each has a different plan. The year group leader has asked them to settle on one approach.</p>
+      <p>Read all three plans carefully. They are all <em>plausible</em> — no plan is obviously wrong. Your job is to judge which most fully realises Easingwood &amp; Williams's framework, and to justify your choice.</p>
+    </div>
+  </div>
+
+  <div class="plan-compare" id="planCompare">
+    <div class="plan-option" data-plan="harriet" data-verdict="weak">
+      <span class="verdict-stamp">weakest</span>
+      <div class="teacher-name">Ms Harriet</div>
+      <div class="teacher-tag">Plan A</div>
+      <div class="pfield"><span class="k">Question</span>Which British bird is most common in our area?</div>
+      <div class="pfield"><span class="k">Data</span>Use the pre-built British Birds database (43 records).</div>
+      <div class="pfield"><span class="k">Activity</span>Pupils in pairs write six questions they can answer by sorting/searching the database. Teacher circulates.</div>
+      <div class="pfield"><span class="k">Software</span>Information Workshop — an open-ended data tool.</div>
+      <div class="pfield"><span class="k">Assessment</span>Pupils submit their six questions and the answers they found.</div>
+    </div>
+
+    <div class="plan-option" data-plan="jonas" data-verdict="best">
+      <span class="verdict-stamp">best fit</span>
+      <div class="teacher-name">Mr Jonas</div>
+      <div class="teacher-tag">Plan B</div>
+      <div class="pfield"><span class="k">Question</span>Should the school add more bird feeders? Where?</div>
+      <div class="pfield"><span class="k">Data</span>Pupils spend one lesson outdoors with clipboards tallying birds seen at three playground locations, then enter their own data.</div>
+      <div class="pfield"><span class="k">Activity</span>Pairs frame their own questions from the data they collected, sort/filter to answer them, and produce a one-paragraph recommendation for the head teacher.</div>
+      <div class="pfield"><span class="k">Software</span>Information Workshop, plus the pre-built British Birds database as a comparison reference.</div>
+      <div class="pfield"><span class="k">Assessment</span>The recommendation paragraph — assessed on whether the claim is supported by the data, not on software fluency.</div>
+    </div>
+
+    <div class="plan-option" data-plan="priya" data-verdict="middle">
+      <span class="verdict-stamp">middle</span>
+      <div class="teacher-name">Ms Priya</div>
+      <div class="teacher-tag">Plan C</div>
+      <div class="pfield"><span class="k">Question</span>Teacher-selected questions of increasing difficulty about British birds.</div>
+      <div class="pfield"><span class="k">Data</span>Use the pre-built British Birds database.</div>
+      <div class="pfield"><span class="k">Activity</span>Pupils work through a structured worksheet of 12 questions, using increasingly complex search operators (equal to, includes, greater than).</div>
+      <div class="pfield"><span class="k">Software</span>Information Workshop.</div>
+      <div class="pfield"><span class="k">Assessment</span>Marked worksheet, with a short extension task: pupils write one question of their own and the search strategy to answer it.</div>
+    </div>
+  </div>
+
+  <div class="task-card">
+    <h3>Your task</h3>
+    <div class="prompt">Select the plan you think best realises the framework, then write a justification that explains <em>why</em> — and what the other two plans get wrong, or merely get less right.</div>
+    <div class="guidance">A strong justification names specific concepts from the chapters (value-added, practical element, assessment focus, software taxonomy, pupil cognition). A weak one just says one plan "is more engaging".</div>
+  </div>
+
+  <div class="short-wrap">
+    <label>Your justification (3–5 sentences)</label>
+    <textarea class="short-answer" data-qid="c3-short" placeholder="Which plan did you choose, and why? What do the other two plans get less right?"></textarea>
+  </div>
+
+  <div class="action-row">
+    <span></span>
+    <button class="btn check" data-action="check-c3">Reveal analysis</button>
+  </div>
+
+  <div class="case-debrief" id="debrief-c3">
+    <div class="lbl">Case 3 analysis</div>
+    <h4>Why Plan B is the strongest fit</h4>
+    <p>All three plans use genuinely conjectural software and a legitimate mathematical topic. The distinction is in <em>who is doing the cognitive work</em>.</p>
+  </div>
+
+  <div class="model-answer" id="model-c3">
+    <div class="lbl">Comparison analysis</div>
+    <div class="txt">
+      <p><strong>Plan B (Mr Jonas) is the strongest.</strong> It is the only plan where pupils do the full cycle the authors describe — frame a question, collect raw data practically, analyse it with the tool, and interpret the findings into a defensible claim. The computer's speed and sorting power earn their place because there's real data to wrestle with. The assessment targets the mathematics (is the claim data-supported?) rather than the software skill.</p>
+      <p><strong>Plan A (Ms Harriet)</strong> is close, but skips the practical data collection. Pupils work on someone else's data, so the authentic sequence of hypothesising → observing → recording is compressed to just the analysis phase. It's still conjectural use of the software, but the mathematics is thinner.</p>
+      <p><strong>Plan C (Ms Priya)</strong> looks rigorous because of its structure, but the structure is the giveaway: the teacher has framed all the questions, the worksheet prescribes the search strategy, and the "extension" task hints at what was missing from the main task. Well-intentioned, but it slides conjectural software toward a revelatory use — the pupils click through a guided tour rather than investigate.</p>
+      <p><strong>Key distinction:</strong> the same software can be used conjecturally or quasi-revelatorily depending on whether <em>the learner frames the question</em>. That's the hinge the framework turns on.</p>
+    </div>
+    <div class="self-rate">
+      <span class="lbl">Self-rate your justification:</span>
+      <button class="rate-btn" data-qid="c3-short" data-rate="full">Strong — named concepts</button>
+      <button class="rate-btn" data-qid="c3-short" data-rate="partial">Partial — right instinct</button>
+      <button class="rate-btn" data-qid="c3-short" data-rate="miss">Needs rework</button>
+    </div>
+  </div>
+
+  <div class="action-row" id="finalRow" style="display:none">
+    <span></span>
+    <button class="btn" onclick="showFinal()">See overall summary →</button>
+  </div>
+</div>
+
+<!-- Final summary -->
+<div class="final-summary" id="finalSummary">
+  <h2>Three cases, <em>one principle</em></h2>
+  <div class="summary-body">
+    Across diagnosis, decision-making, and comparison, the same question kept surfacing: <em>does the technology keep the learner's mathematical cognition active, or quietly take it over?</em> That single question covers most of what the authors have to say about planning.
+  </div>
+  <div class="takeaways">
+    <h3>What to carry into your own planning</h3>
+    <ul>
+      <li>Write the objective as a <em>mathematics</em> objective. If it reads as a software skill, the lesson will drift.</li>
+      <li>Protect the practical element — the computer enhances hands-on mathematics, it doesn't replace it.</li>
+      <li>Choose the software for what the pupil will <em>do with it</em>, not for what it does. The same tool can be conjectural or quasi-revelatory depending on who frames the question.</li>
+      <li>Assess the mathematics, not the mouse. If your assessment could be passed by a fluent typist with no understanding, redesign it.</li>
+      <li>Plan the collaboration. Pair structure, pupil grouping, and the teacher's questions determine whether the discourse is mathematical or procedural.</li>
+    </ul>
+  </div>
+</div>
+
+</div>
+
+<script>
+// ========== State ==========
+const state = {
+  activeCase: 1,
+  c1: { flaws: new Set(), checked: false, shortRate: null },
+  c2: { step: 1, choices: {}, completed: false },
+  c3: { plan: null, checked: false, shortRate: null }
+};
+
+// ========== Case nav ==========
+document.querySelectorAll('.case-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    const n = parseInt(tab.dataset.tab);
+    document.querySelectorAll('.case-tab').forEach(t => t.classList.toggle('active', t === tab));
+    document.querySelectorAll('.case').forEach(c => c.classList.toggle('active', parseInt(c.dataset.case) === n));
+    state.activeCase = n;
+    window.scrollTo({ top: 0, behavior: 'smooth' });
+  });
+});
+
+// ========== CASE 1: Diagnose ==========
+document.querySelectorAll('#flawList .flaw-opt').forEach(opt => {
+  opt.addEventListener('click', () => {
+    if (state.c1.checked) return;
+    const id = opt.dataset.id;
+    if (state.c1.flaws.has(id)) { state.c1.flaws.delete(id); opt.classList.remove('selected'); }
+    else { state.c1.flaws.add(id); opt.classList.add('selected'); }
+  });
+});
+
+document.querySelector('[data-action="check-c1"]').addEventListener('click', () => {
+  state.c1.checked = true;
+  document.querySelectorAll('#flawList .flaw-opt').forEach(opt => {
+    const id = opt.dataset.id;
+    const isCorrect = opt.dataset.correct === 'true';
+    const picked = state.c1.flaws.has(id);
+    opt.classList.add('disabled');
+    opt.classList.remove('selected');
+    if (isCorrect && picked) opt.classList.add('correct');
+    else if (!isCorrect && picked) opt.classList.add('incorrect');
+    else if (isCorrect && !picked) opt.classList.add('missed');
+  });
+  document.querySelector('#debrief-c1').classList.add('show');
+  document.querySelector('#model-c1').classList.add('show');
+  document.querySelector('[data-qid="c1-short"]').setAttribute('readonly', 'true');
+  markDone(1);
+});
+
+// self-rate buttons
+document.querySelectorAll('.rate-btn').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const qid = btn.dataset.qid;
+    btn.parentElement.querySelectorAll('.rate-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    if (qid === 'c1-short') state.c1.shortRate = btn.dataset.rate;
+    if (qid === 'c3-short') state.c3.shortRate = btn.dataset.rate;
+  });
+});
+
+// ========== CASE 2: Branching decisions ==========
+document.querySelectorAll('.branch-choice').forEach(choice => {
+  choice.addEventListener('click', () => {
+    const step = parseInt(choice.dataset.step);
+    if (state.c2.choices[step]) return; // already chosen
+    const quality = choice.dataset.quality;
+    const label = choice.dataset.label;
+    // mark siblings
+    const stepEl = choice.closest('.branch-step');
+    stepEl.querySelectorAll('.branch-choice').forEach(c => {
+      c.classList.add('disabled');
+      if (c === choice) c.classList.add('selected', quality);
+    });
+    stepEl.querySelector('.branch-rationale').classList.add('show');
+    stepEl.querySelector('.branch-next').classList.add('show');
+    state.c2.choices[step] = { quality, label };
+    renderTrail();
+  });
+});
+
+document.querySelectorAll('[data-action="next-branch"]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    const current = parseInt(btn.dataset.step);
+    const next = current + 1;
+    document.querySelector(`.branch-step[data-step="${current}"]`).classList.remove('active');
+    const nextEl = document.querySelector(`.branch-step[data-step="${next}"]`);
+    if (nextEl) nextEl.classList.add('active');
+    state.c2.step = next;
+    window.scrollTo({ top: document.querySelector('[data-case="2"]').offsetTop - 20, behavior: 'smooth' });
+  });
+});
+
+document.querySelector('[data-action="finish-branch"]').addEventListener('click', () => {
+  document.querySelector('.branch-step[data-step="4"]').classList.remove('active');
+  document.querySelector('#debrief-c2').classList.add('show');
+  state.c2.completed = true;
+  markDone(2);
+  window.scrollTo({ top: document.querySelector('#debrief-c2').offsetTop - 40, behavior: 'smooth' });
+});
+
+function renderTrail() {
+  const keys = Object.keys(state.c2.choices);
+  if (!keys.length) return;
+  const trail = document.querySelector('#trail-c2');
+  const content = document.querySelector('#trailContent');
+  const labels = {
+    1: 'Starting point',
+    2: 'Grouping',
+    3: 'Circle question',
+    4: 'Assessment'
+  };
+  content.innerHTML = keys.map(k => {
+    const c = state.c2.choices[k];
+    const badge = c.quality === 'best' ? 'best' : (c.quality === 'poor' ? 'poor' : 'sub');
+    return `<div class="trail-row"><span class="tk">${labels[k]}</span><span class="tv">${c.label}<span class="trail-badge ${badge}">${c.quality}</span></span></div>`;
+  }).join('');
+  trail.classList.add('show');
+}
+
+// ========== CASE 3: Compare plans ==========
+document.querySelectorAll('#planCompare .plan-option').forEach(opt => {
+  opt.addEventListener('click', () => {
+    if (state.c3.checked) return;
+    document.querySelectorAll('#planCompare .plan-option').forEach(o => o.classList.remove('selected'));
+    opt.classList.add('selected');
+    state.c3.plan = opt.dataset.plan;
+  });
+});
+
+document.querySelector('[data-action="check-c3"]').addEventListener('click', () => {
+  state.c3.checked = true;
+  document.querySelectorAll('#planCompare .plan-option').forEach(opt => {
+    opt.classList.add('disabled');
+    const v = opt.dataset.verdict;
+    if (v === 'best') opt.classList.add('best');
+    else if (v === 'weak') opt.classList.add('weak');
+  });
+  document.querySelector('#debrief-c3').classList.add('show');
+  document.querySelector('#model-c3').classList.add('show');
+  document.querySelector('[data-qid="c3-short"]').setAttribute('readonly', 'true');
+  document.querySelector('#finalRow').style.display = 'flex';
+  markDone(3);
+});
+
+function markDone(n) {
+  document.querySelector(`.case-tab[data-tab="${n}"]`).classList.add('done');
+}
+
+function showFinal() {
+  document.querySelector('#finalSummary').classList.add('show');
+  window.scrollTo({ top: document.querySelector('#finalSummary').offsetTop - 40, behavior: 'smooth' });
+}
+</script>
+</body>
+</html>
