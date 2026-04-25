@@ -71,33 +71,52 @@
   /* Case nav */
   .case-nav {
     display: flex;
-    gap: 0;
+    gap: 8px;
     margin: 28px 0 36px;
-    border-bottom: 1.5px solid var(--ink);
+    background: var(--paper-2);
+    border: 1.5px solid var(--ink);
+    padding: 6px;
+    box-shadow: 4px 4px 0 var(--ink);
   }
   .case-tab {
     flex: 1;
     background: transparent;
-    border: none;
-    padding: 14px 10px;
+    border: 1.5px solid transparent;
+    padding: 20px 16px;
     cursor: pointer;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 10px;
+    font-size: 14px;
     letter-spacing: 0.15em;
     text-transform: uppercase;
+    font-weight: 700;
     color: var(--muted);
-    border-bottom: 3px solid transparent;
-    margin-bottom: -1.5px;
     transition: all 0.2s ease;
     text-align: left;
   }
-  .case-tab:hover { color: var(--ink); }
-  .case-tab.active {
+  .case-tab:hover {
     color: var(--ink);
-    border-bottom-color: var(--accent);
+    background: var(--paper);
   }
-  .case-tab .num { display: block; color: var(--accent); font-weight: 600; margin-bottom: 4px; }
+  .case-tab.active {
+    color: var(--paper);
+    background: var(--ink);
+    border-color: var(--ink);
+  }
+  .case-tab .num {
+    display: block;
+    color: var(--accent);
+    font-weight: 700;
+    font-size: 11px;
+    margin-bottom: 8px;
+    letter-spacing: 0.18em;
+  }
+  .case-tab.active .num { color: var(--gold); }
   .case-tab.done .num::after { content: ' ✓'; color: var(--success); }
+  .case-tab.active.done .num::after { color: var(--gold); }
+  @media (max-width: 600px) {
+    .case-tab { padding: 14px 10px; font-size: 12px; }
+    .case-tab .num { font-size: 10px; }
+  }
 
   /* Case container */
   .case { display: none; }
@@ -311,6 +330,10 @@
     text-align: left;
     transition: all 0.15s ease;
     position: relative;
+  }
+  .branch-choice .opt-letter {
+    font-weight: 700;
+    margin-right: 4px;
   }
   .branch-choice:hover:not(.disabled) {
     transform: translate(-2px, -2px);
@@ -907,19 +930,19 @@
     <div class="setup">Given mixed prior experience and the cognitive challenge the authors describe, what is Ms Okafor's best opening lesson?</div>
     <div class="branch-opts">
       <button class="branch-choice" data-step="1" data-quality="best" data-label="Start with 'human turtle' in the playground">
-        <strong>A.</strong> Split the class into pairs in the playground. One child gives commands ("forward three", "right turn") to their partner who physically walks the path. No computer yet.
+        Split the class into pairs in the playground. One child gives commands ("forward three", "right turn") to their partner who physically walks the path. No computer yet.
         <div class="verdict">◆ Best — grounds direction in embodied experience</div>
       </button>
       <button class="branch-choice" data-step="1" data-quality="suboptimal" data-label="Start with Roamers on a play mat">
-        <strong>B.</strong> Introduce Roamers immediately. Pupils program paths to get from one marked point to another on the classroom floor.
+        Introduce Roamers immediately. Pupils program paths to get from one marked point to another on the classroom floor.
         <div class="verdict">◆ Acceptable, but skips a valuable grounding stage</div>
       </button>
       <button class="branch-choice" data-step="1" data-quality="poor" data-label="Start with Imagine Logo on screen">
-        <strong>C.</strong> Start in the ICT suite with <em>Imagine Logo</em>. Demonstrate on the whiteboard, then let pupils experiment with point-and-click commands.
+        Start in the ICT suite with <em>Imagine Logo</em>. Demonstrate on the whiteboard, then let pupils experiment with point-and-click commands.
         <div class="verdict">◆ Weak — risks the "up/down" misconception the authors warn about</div>
       </button>
       <button class="branch-choice" data-step="1" data-quality="suboptimal" data-label="Start with typed commands in Imagine Logo">
-        <strong>D.</strong> Start with typed commands in <em>Imagine Logo</em> — pupils learn FORWARD, LEFT, RIGHT from the beginning so they're "thinking LOGO" straight away.
+        Start with typed commands in <em>Imagine Logo</em> — pupils learn FORWARD, LEFT, RIGHT from the beginning so they're "thinking LOGO" straight away.
         <div class="verdict">◆ Too abstract for day one with no prior experience</div>
       </button>
     </div>
@@ -939,19 +962,19 @@
     <div class="setup">Ms Okafor has booked the ICT suite for lessons 3–6. How should she organise pupils across the computers?</div>
     <div class="branch-opts">
       <button class="branch-choice" data-step="2" data-quality="best" data-label="Pairs; mix LOGO experience across pairs">
-        <strong>A.</strong> Pairs, deliberately mixing the few experienced pupils across pairs so each pair has one "driver" with some confidence.
+        Pairs, deliberately mixing the few experienced pupils across pairs so each pair has one "driver" with some confidence.
         <div class="verdict">◆ Best — pairs enable the collaborative discourse the authors emphasise, and mixing levels activates peer tutoring</div>
       </button>
       <button class="branch-choice" data-step="2" data-quality="poor" data-label="One pupil per computer">
-        <strong>B.</strong> One pupil per computer so each child has full control and gets maximum practice time.
+        One pupil per computer so each child has full control and gets maximum practice time.
         <div class="verdict">◆ Weak — removes collaborative talk, which Papert-influenced pedagogy treats as central</div>
       </button>
       <button class="branch-choice" data-step="2" data-quality="suboptimal" data-label="Threes, grouped by prior attainment">
-        <strong>C.</strong> Groups of three, grouped by mathematical prior attainment so the task can be pitched for each group.
+        Groups of three, grouped by mathematical prior attainment so the task can be pitched for each group.
         <div class="verdict">◆ Acceptable for the maths, but threes risk one child watching</div>
       </button>
       <button class="branch-choice" data-step="2" data-quality="suboptimal" data-label="Pairs, grouped by LOGO experience">
-        <strong>D.</strong> Pairs, grouping the experienced pupils together so they can extend quickly and not be held back.
+        Pairs, grouping the experienced pupils together so they can extend quickly and not be held back.
         <div class="verdict">◆ Understandable, but wastes the peer-tutoring opportunity the mix would create</div>
       </button>
     </div>
@@ -971,19 +994,19 @@
     <div class="setup">In lesson 4, a pupil wants to draw a clock face and asks: "How do I make the turtle draw a circle?" Ms Okafor has seen this coming. What is her best response, given the angle focus of her unit?</div>
     <div class="branch-opts">
       <button class="branch-choice" data-step="3" data-quality="best" data-label="Scaffold a REPEAT procedure that hits factors of 360">
-        <strong>A.</strong> Scaffold the pupil to write a REPEAT procedure: "What if the turtle moved forward a tiny bit, turned a tiny bit, and did that many times? The turn has to add up to... how much?" Lets the pupil discover the 360° constraint.
+        Scaffold the pupil to write a REPEAT procedure: "What if the turtle moved forward a tiny bit, turned a tiny bit, and did that many times? The turn has to add up to... how much?" Lets the pupil discover the 360° constraint.
         <div class="verdict">◆ Best — uses the circle as a vehicle for the unit's angle focus</div>
       </button>
       <button class="branch-choice" data-step="3" data-quality="poor" data-label="Tell the pupil circles aren't possible in LOGO">
-        <strong>B.</strong> Explain that turtles can only draw straight lines, so the pupil should pick a shape with corners instead.
+        Explain that turtles can only draw straight lines, so the pupil should pick a shape with corners instead.
         <div class="verdict">◆ Wrong — this contradicts the chapter, and shuts down a rich opportunity</div>
       </button>
       <button class="branch-choice" data-step="3" data-quality="suboptimal" data-label="Give the pupil a pre-written CIRCLE procedure">
-        <strong>C.</strong> Give the pupil a pre-written CIRCLE procedure to paste in. This lets them progress with the clock face without getting stuck.
+        Give the pupil a pre-written CIRCLE procedure to paste in. This lets them progress with the clock face without getting stuck.
         <div class="verdict">◆ Pragmatic, but sacrifices the mathematical payoff — this unit is <em>about</em> angle</div>
       </button>
       <button class="branch-choice" data-step="3" data-quality="suboptimal" data-label="Redirect to a graphics package">
-        <strong>D.</strong> Redirect the pupil to use a graphics package to draw the clock, coming back to LOGO for a different shape.
+        Redirect the pupil to use a graphics package to draw the clock, coming back to LOGO for a different shape.
         <div class="verdict">◆ Misses the point — the pupil's question <em>is</em> the lesson</div>
       </button>
     </div>
@@ -1003,19 +1026,19 @@
     <div class="setup">Ms Okafor needs evidence of mathematical learning for the unit. Which assessment approach best fits the framework?</div>
     <div class="branch-opts">
       <button class="branch-choice" data-step="4" data-quality="best" data-label="Paper task: predict turtle paths + justify with angle reasoning">
-        <strong>A.</strong> A paper task: pupils are shown four short LOGO procedures and must predict what each will draw, then refine one procedure to make it more concise. They justify each refinement in a sentence.
+        A paper task: pupils are shown four short LOGO procedures and must predict what each will draw, then refine one procedure to make it more concise. They justify each refinement in a sentence.
         <div class="verdict">◆ Best — assesses mathematical thinking, independent of keyboard fluency</div>
       </button>
       <button class="branch-choice" data-step="4" data-quality="poor" data-label="Timed test on entering LOGO commands">
-        <strong>B.</strong> A timed practical test: pupils sit at computers and are marked on how quickly they can produce a square, triangle, and hexagon.
+        A timed practical test: pupils sit at computers and are marked on how quickly they can produce a square, triangle, and hexagon.
         <div class="verdict">◆ Weak — assesses keyboard speed and recall, not mathematics</div>
       </button>
       <button class="branch-choice" data-step="4" data-quality="suboptimal" data-label="Portfolio of screenshots from the unit">
-        <strong>C.</strong> A portfolio of screenshots of each pupil's best drawings from the unit, with a one-sentence caption per image.
+        A portfolio of screenshots of each pupil's best drawings from the unit, with a one-sentence caption per image.
         <div class="verdict">◆ Partial — shows output but little evidence of reasoning</div>
       </button>
       <button class="branch-choice" data-step="4" data-quality="suboptimal" data-label="Teacher observation during pair work">
-        <strong>D.</strong> Formative observation during pair work, noting which pupils propose commands versus which type them in.
+        Formative observation during pair work, noting which pupils propose commands versus which type them in.
         <div class="verdict">◆ Valuable formatively, but hard to defend as the <em>only</em> evidence of learning</div>
       </button>
     </div>
@@ -1204,6 +1227,35 @@ const state = {
   c3: { plan: null, checked: false, shortRate: null }
 };
 
+// ========== Randomise Case 2 option order ==========
+// (Run before any event listeners are attached)
+(function shuffleCase2Options() {
+  function shuffle(arr) {
+    for (let i = arr.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [arr[i], arr[j]] = [arr[j], arr[i]];
+    }
+    return arr;
+  }
+  document.querySelectorAll('.branch-step').forEach(step => {
+    const container = step.querySelector('.branch-opts');
+    const options = Array.from(container.querySelectorAll('.branch-choice'));
+    shuffle(options);
+    // re-append in shuffled order and prepend a fresh letter
+    options.forEach((opt, i) => {
+      const letter = String.fromCharCode(65 + i); // A, B, C, D
+      // remove any existing letter span (idempotent if re-run)
+      const existing = opt.querySelector('.opt-letter');
+      if (existing) existing.remove();
+      const span = document.createElement('span');
+      span.className = 'opt-letter';
+      span.textContent = letter + '. ';
+      opt.insertBefore(span, opt.firstChild);
+      container.appendChild(opt);
+    });
+  });
+})();
+
 // ========== Case nav ==========
 document.querySelectorAll('.case-tab').forEach(tab => {
   tab.addEventListener('click', () => {
@@ -1270,6 +1322,23 @@ document.querySelectorAll('.rate-btn').forEach(btn => {
 });
 
 // ========== CASE 2: Branching decisions ==========
+
+// Shuffle options within each step so the "best" choice isn't always first
+(function shuffleBranchOptions() {
+  document.querySelectorAll('.branch-step').forEach(step => {
+    const container = step.querySelector('.branch-opts');
+    if (!container) return;
+    const choices = Array.from(container.querySelectorAll('.branch-choice'));
+    // Fisher-Yates shuffle
+    for (let i = choices.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [choices[i], choices[j]] = [choices[j], choices[i]];
+    }
+    // Re-append in shuffled order
+    choices.forEach(c => container.appendChild(c));
+  });
+})();
+
 document.querySelectorAll('.branch-choice').forEach(choice => {
   choice.addEventListener('click', () => {
     const step = parseInt(choice.dataset.step);
@@ -1410,7 +1479,7 @@ function showFinal() {
   // since fetch is no-cors we can't read response — assume success after short delay
   setTimeout(() => {
     status.className = 'submit-status success show';
-    status.textContent = '✓ Results saved — your teacher can see your responses';
+    status.textContent = '✓ Results saved';
   }, 1200);
 }
 </script>
