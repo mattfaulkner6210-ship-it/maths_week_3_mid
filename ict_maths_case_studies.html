@@ -626,6 +626,91 @@
   }
   .case-debrief p:last-child { margin-bottom: 0; }
 
+  /* Name gate */
+  .name-gate {
+    position: fixed;
+    inset: 0;
+    background: rgba(26, 24, 20, 0.85);
+    z-index: 1000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    backdrop-filter: blur(6px);
+  }
+  .name-gate.hidden { display: none; }
+  .name-gate-card {
+    background: var(--paper);
+    border: 2px solid var(--ink);
+    padding: 40px 36px;
+    max-width: 460px;
+    width: 100%;
+    box-shadow: 8px 8px 0 var(--accent);
+  }
+  .name-gate-card .eyebrow {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 12px;
+  }
+  .name-gate-card h2 {
+    font-family: 'Fraunces', serif;
+    font-size: 28px;
+    font-weight: 700;
+    letter-spacing: -0.01em;
+    line-height: 1.1;
+    margin-bottom: 12px;
+  }
+  .name-gate-card h2 em { font-style: italic; color: var(--accent); font-weight: 500; }
+  .name-gate-card p {
+    font-family: 'Fraunces', serif;
+    font-size: 15px;
+    color: var(--muted);
+    margin-bottom: 22px;
+    line-height: 1.5;
+  }
+  .name-input {
+    width: 100%;
+    padding: 14px 16px;
+    font-family: inherit;
+    font-size: 16px;
+    background: var(--paper-2);
+    border: 1.5px solid var(--ink);
+    color: var(--ink);
+    margin-bottom: 16px;
+  }
+  .name-input:focus {
+    outline: none;
+    box-shadow: 3px 3px 0 var(--ink);
+    transform: translate(-2px, -2px);
+  }
+  .name-error {
+    color: var(--error);
+    font-size: 13px;
+    margin-bottom: 12px;
+    display: none;
+    font-family: 'JetBrains Mono', monospace;
+    letter-spacing: 0.05em;
+  }
+  .name-error.show { display: block; }
+
+  /* Submission status */
+  .submit-status {
+    margin-top: 20px;
+    padding: 14px 16px;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12px;
+    letter-spacing: 0.08em;
+    text-align: center;
+    display: none;
+  }
+  .submit-status.show { display: block; }
+  .submit-status.pending { background: var(--paper); border: 1.5px solid var(--gold); color: var(--ink); }
+  .submit-status.success { background: var(--success); color: var(--paper); }
+  .submit-status.error { background: var(--error); color: var(--paper); }
+
   /* Final summary */
   .final-summary {
     background: var(--paper-2);
@@ -687,6 +772,17 @@
 </style>
 </head>
 <body>
+
+<!-- Name entry gate -->
+<div class="name-gate" id="nameGate">
+  <div class="name-gate-card">
+    <h2>Please enter your first name:</h2>
+    <input type="text" class="name-input" id="nameInput" placeholder="First name" autocomplete="given-name">
+    <div class="name-error" id="nameError">Please enter your first name to continue</div>
+    <button class="btn check" id="nameSubmit" style="width: 100%; padding: 14px;">Begin activity →</button>
+  </div>
+</div>
+
 <div class="container">
 
 <header>
@@ -1039,6 +1135,7 @@
   <div class="summary-body">
     Across diagnosis, decision-making, and comparison, the same question kept surfacing: <em>does the technology keep the learner's mathematical cognition active, or quietly take it over?</em> That single question covers most of what the authors have to say about planning.
   </div>
+  <div class="submit-status" id="submitStatus"></div>
   <div class="takeaways">
     <h3>What to carry into your own planning</h3>
     <ul>
@@ -1054,6 +1151,51 @@
 </div>
 
 <script>
+// ========== Tracking config ==========
+const TRACKING_URL = 'https://script.google.com/macros/s/AKfycbxutYN2GTiMq2G1fyGKhy7TDgPEYGmzx7T1cuJbFrQvCnLqCmFW9utQtkSZ0RBKdm_imA/exec';
+const ACTIVITY_ID = 'ict-maths-case-studies';
+
+let studentName = '';
+const startTime = Date.now();
+
+// ========== Name gate ==========
+function submitName() {
+  const input = document.getElementById('nameInput');
+  const error = document.getElementById('nameError');
+  const name = input.value.trim();
+  if (name.length < 2) {
+    error.classList.add('show');
+    input.focus();
+    return;
+  }
+  studentName = name;
+  document.getElementById('nameGate').classList.add('hidden');
+  // log start event (fire and forget)
+  sendTracking({ event: 'started' });
+}
+document.getElementById('nameSubmit').addEventListener('click', submitName);
+document.getElementById('nameInput').addEventListener('keydown', e => {
+  if (e.key === 'Enter') submitName();
+});
+
+// ========== Tracking submission ==========
+function sendTracking(payload) {
+  if (!studentName) return;
+  const data = {
+    activity: ACTIVITY_ID,
+    name: studentName,
+    timestamp: new Date().toISOString(),
+    ...payload
+  };
+  // use no-cors POST so we don't need CORS config on the Apps Script
+  fetch(TRACKING_URL, {
+    method: 'POST',
+    mode: 'no-cors',
+    headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+    body: JSON.stringify(data)
+  }).catch(err => console.warn('Tracking failed:', err));
+}
+
 // ========== State ==========
 const state = {
   activeCase: 1,
@@ -1085,20 +1227,35 @@ document.querySelectorAll('#flawList .flaw-opt').forEach(opt => {
 
 document.querySelector('[data-action="check-c1"]').addEventListener('click', () => {
   state.c1.checked = true;
+  let correctCount = 0;
+  let incorrectCount = 0;
+  let missedCount = 0;
   document.querySelectorAll('#flawList .flaw-opt').forEach(opt => {
     const id = opt.dataset.id;
     const isCorrect = opt.dataset.correct === 'true';
     const picked = state.c1.flaws.has(id);
     opt.classList.add('disabled');
     opt.classList.remove('selected');
-    if (isCorrect && picked) opt.classList.add('correct');
-    else if (!isCorrect && picked) opt.classList.add('incorrect');
-    else if (isCorrect && !picked) opt.classList.add('missed');
+    if (isCorrect && picked) { opt.classList.add('correct'); correctCount++; }
+    else if (!isCorrect && picked) { opt.classList.add('incorrect'); incorrectCount++; }
+    else if (isCorrect && !picked) { opt.classList.add('missed'); missedCount++; }
   });
   document.querySelector('#debrief-c1').classList.add('show');
   document.querySelector('#model-c1').classList.add('show');
   document.querySelector('[data-qid="c1-short"]').setAttribute('readonly', 'true');
   markDone(1);
+
+  // track Case 1 completion
+  const shortAnswer = document.querySelector('[data-qid="c1-short"]').value.trim();
+  sendTracking({
+    event: 'case_complete',
+    case: 1,
+    correctFlaws: correctCount,
+    incorrectFlaws: incorrectCount,
+    missedFlaws: missedCount,
+    shortAnswerLength: shortAnswer.length,
+    shortAnswer: shortAnswer
+  });
 });
 
 // self-rate buttons
@@ -1150,6 +1307,25 @@ document.querySelector('[data-action="finish-branch"]').addEventListener('click'
   state.c2.completed = true;
   markDone(2);
   window.scrollTo({ top: document.querySelector('#debrief-c2').offsetTop - 40, behavior: 'smooth' });
+
+  // track Case 2 — count quality of decisions
+  const choices = state.c2.choices;
+  const bestCount = Object.values(choices).filter(c => c.quality === 'best').length;
+  const subCount = Object.values(choices).filter(c => c.quality === 'suboptimal').length;
+  const poorCount = Object.values(choices).filter(c => c.quality === 'poor').length;
+  sendTracking({
+    event: 'case_complete',
+    case: 2,
+    bestChoices: bestCount,
+    suboptimalChoices: subCount,
+    poorChoices: poorCount,
+    decisions: JSON.stringify({
+      start: choices[1]?.quality,
+      grouping: choices[2]?.quality,
+      circle: choices[3]?.quality,
+      assessment: choices[4]?.quality
+    })
+  });
 });
 
 function renderTrail() {
@@ -1194,6 +1370,18 @@ document.querySelector('[data-action="check-c3"]').addEventListener('click', () 
   document.querySelector('[data-qid="c3-short"]').setAttribute('readonly', 'true');
   document.querySelector('#finalRow').style.display = 'flex';
   markDone(3);
+
+  // track Case 3
+  const shortAnswer = document.querySelector('[data-qid="c3-short"]').value.trim();
+  const planMap = { harriet: 'A', jonas: 'B', priya: 'C' };
+  sendTracking({
+    event: 'case_complete',
+    case: 3,
+    chosenPlan: planMap[state.c3.plan] || state.c3.plan,
+    correctChoice: state.c3.plan === 'jonas',
+    shortAnswerLength: shortAnswer.length,
+    shortAnswer: shortAnswer
+  });
 });
 
 function markDone(n) {
@@ -1203,6 +1391,27 @@ function markDone(n) {
 function showFinal() {
   document.querySelector('#finalSummary').classList.add('show');
   window.scrollTo({ top: document.querySelector('#finalSummary').offsetTop - 40, behavior: 'smooth' });
+
+  // show pending status, send final event, then update status
+  const status = document.getElementById('submitStatus');
+  status.className = 'submit-status pending show';
+  status.textContent = '◴ Saving your results...';
+
+  const durationMin = Math.round((Date.now() - startTime) / 60000);
+  sendTracking({
+    event: 'activity_complete',
+    durationMinutes: durationMin,
+    case1ShortRate: state.c1.shortRate || 'not_rated',
+    case3ShortRate: state.c3.shortRate || 'not_rated',
+    case2BestChoices: Object.values(state.c2.choices).filter(c => c.quality === 'best').length,
+    case3CorrectChoice: state.c3.plan === 'jonas'
+  });
+
+  // since fetch is no-cors we can't read response — assume success after short delay
+  setTimeout(() => {
+    status.className = 'submit-status success show';
+    status.textContent = '✓ Results saved — your teacher can see your responses';
+  }, 1200);
 }
 </script>
 </body>
