@@ -71,22 +71,22 @@
   /* Case nav */
   .case-nav {
     display: flex;
-    gap: 8px;
+    gap: 10px;
     margin: 28px 0 36px;
     background: var(--paper-2);
-    border: 1.5px solid var(--ink);
-    padding: 6px;
-    box-shadow: 4px 4px 0 var(--ink);
+    border: 2px solid var(--ink);
+    padding: 8px;
+    box-shadow: 6px 6px 0 var(--ink);
   }
   .case-tab {
     flex: 1;
     background: transparent;
     border: 1.5px solid transparent;
-    padding: 20px 16px;
+    padding: 28px 18px;
     cursor: pointer;
     font-family: 'JetBrains Mono', monospace;
-    font-size: 14px;
-    letter-spacing: 0.15em;
+    font-size: 18px;
+    letter-spacing: 0.12em;
     text-transform: uppercase;
     font-weight: 700;
     color: var(--muted);
@@ -106,16 +106,16 @@
     display: block;
     color: var(--accent);
     font-weight: 700;
-    font-size: 11px;
-    margin-bottom: 8px;
+    font-size: 13px;
+    margin-bottom: 10px;
     letter-spacing: 0.18em;
   }
   .case-tab.active .num { color: var(--gold); }
   .case-tab.done .num::after { content: ' ✓'; color: var(--success); }
   .case-tab.active.done .num::after { color: var(--gold); }
   @media (max-width: 600px) {
-    .case-tab { padding: 14px 10px; font-size: 12px; }
-    .case-tab .num { font-size: 10px; }
+    .case-tab { padding: 18px 10px; font-size: 13px; }
+    .case-tab .num { font-size: 11px; }
   }
 
   /* Case container */
@@ -330,10 +330,6 @@
     text-align: left;
     transition: all 0.15s ease;
     position: relative;
-  }
-  .branch-choice .opt-letter {
-    font-weight: 700;
-    margin-right: 4px;
   }
   .branch-choice:hover:not(.disabled) {
     transform: translate(-2px, -2px);
@@ -1227,35 +1223,6 @@ const state = {
   c3: { plan: null, checked: false, shortRate: null }
 };
 
-// ========== Randomise Case 2 option order ==========
-// (Run before any event listeners are attached)
-(function shuffleCase2Options() {
-  function shuffle(arr) {
-    for (let i = arr.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [arr[i], arr[j]] = [arr[j], arr[i]];
-    }
-    return arr;
-  }
-  document.querySelectorAll('.branch-step').forEach(step => {
-    const container = step.querySelector('.branch-opts');
-    const options = Array.from(container.querySelectorAll('.branch-choice'));
-    shuffle(options);
-    // re-append in shuffled order and prepend a fresh letter
-    options.forEach((opt, i) => {
-      const letter = String.fromCharCode(65 + i); // A, B, C, D
-      // remove any existing letter span (idempotent if re-run)
-      const existing = opt.querySelector('.opt-letter');
-      if (existing) existing.remove();
-      const span = document.createElement('span');
-      span.className = 'opt-letter';
-      span.textContent = letter + '. ';
-      opt.insertBefore(span, opt.firstChild);
-      container.appendChild(opt);
-    });
-  });
-})();
-
 // ========== Case nav ==========
 document.querySelectorAll('.case-tab').forEach(tab => {
   tab.addEventListener('click', () => {
@@ -1328,12 +1295,16 @@ document.querySelectorAll('.rate-btn').forEach(btn => {
   document.querySelectorAll('.branch-step').forEach(step => {
     const container = step.querySelector('.branch-opts');
     if (!container) return;
-    const choices = Array.from(container.querySelectorAll('.branch-choice'));
-    // Fisher-Yates shuffle
-    for (let i = choices.length - 1; i > 0; i--) {
-      const j = Math.floor(Math.random() * (i + 1));
-      [choices[i], choices[j]] = [choices[j], choices[i]];
-    }
+    let choices = Array.from(container.querySelectorAll('.branch-choice'));
+    // Fisher-Yates shuffle, repeat until "best" is NOT first
+    let attempts = 0;
+    do {
+      for (let i = choices.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [choices[i], choices[j]] = [choices[j], choices[i]];
+      }
+      attempts++;
+    } while (choices[0]?.dataset.quality === 'best' && attempts < 10);
     // Re-append in shuffled order
     choices.forEach(c => container.appendChild(c));
   });
@@ -1417,6 +1388,24 @@ function renderTrail() {
 }
 
 // ========== CASE 3: Compare plans ==========
+
+// Shuffle the position of plan cards, but keep "Plan A/B/C" labels tied
+// to the teachers so the model answer's references stay consistent.
+(function shufflePlanCards() {
+  const container = document.getElementById('planCompare');
+  if (!container) return;
+  const cards = Array.from(container.querySelectorAll('.plan-option'));
+  let attempts = 0;
+  do {
+    for (let i = cards.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [cards[i], cards[j]] = [cards[j], cards[i]];
+    }
+    attempts++;
+  } while (cards[0]?.dataset.verdict === 'best' && attempts < 10);
+  cards.forEach(c => container.appendChild(c));
+})();
+
 document.querySelectorAll('#planCompare .plan-option').forEach(opt => {
   opt.addEventListener('click', () => {
     if (state.c3.checked) return;
